@@ -50503,40 +50503,43 @@ function init() {
 }
 
 var trainStatusElement = document.getElementById('train-status'); // Set hyper params from UI values.
-
-var learningRateElement = document.getElementById('learningRate');
+// const learningRateElement = document.getElementById('learningRate');
+// export const getLearningRate = () => +learningRateElement.value;
 
 var getLearningRate = function getLearningRate() {
-  return +learningRateElement.value;
-};
+  return +0.0001;
+}; // const batchSizeFractionElement = document.getElementById('batchSizeFraction');
+// export const getBatchSizeFraction = () => +batchSizeFractionElement.value;
+
 
 exports.getLearningRate = getLearningRate;
-var batchSizeFractionElement = document.getElementById('batchSizeFraction');
 
 var getBatchSizeFraction = function getBatchSizeFraction() {
-  return +batchSizeFractionElement.value;
-};
+  return +0.4;
+}; // const epochsElement = document.getElementById('epochs');
+// export const getEpochs = () => +epochsElement.value;
+
 
 exports.getBatchSizeFraction = getBatchSizeFraction;
-var epochsElement = document.getElementById('epochs');
 
 var getEpochs = function getEpochs() {
-  return +epochsElement.value;
-};
+  return +20;
+}; // const denseUnitsElement = document.getElementById('dense-units');
+// export const getDenseUnits = () => +denseUnitsElement.value;
+
 
 exports.getEpochs = getEpochs;
-var denseUnitsElement = document.getElementById('dense-units');
 
 var getDenseUnits = function getDenseUnits() {
-  return +denseUnitsElement.value;
+  return +100;
 };
 
 exports.getDenseUnits = getDenseUnits;
 var statusElement = document.getElementById('status');
 
 function startPacman() {
-  //google.pacman.startGameplay(); 
-  alert("只有左右操作");
+  //google.pacman.startGameplay();
+  board.start();
 }
 
 function predictClass(classId) {
@@ -51049,7 +51052,7 @@ function _train() {
   return _train.apply(this, arguments);
 }
 
-var isPredicting = false;
+window.isPredicting = false;
 
 function predict() {
   return _predict.apply(this, arguments);
@@ -51067,7 +51070,7 @@ function _predict() {
             ui.isPredicting();
 
           case 1:
-            if (!isPredicting) {
+            if (!window.isPredicting) {
               _context5.next = 12;
               break;
             }
@@ -51121,19 +51124,28 @@ _regenerator.default.mark(function _callee() {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          ui.trainStatus('Training...');
-          _context.next = 3;
-          return tf.nextFrame();
+          if (!(controllerDataset.xs == null)) {
+            _context.next = 3;
+            break;
+          }
+
+          alert('请添加右边每个键位的照片，全部添加完毕再点击此键，等待 Loss 值固定不变后，点击开始游戏');
+          return _context.abrupt("return");
 
         case 3:
-          _context.next = 5;
+          ui.trainStatus('Training...');
+          _context.next = 6;
           return tf.nextFrame();
 
-        case 5:
-          isPredicting = false;
+        case 6:
+          _context.next = 8;
+          return tf.nextFrame();
+
+        case 8:
+          window.isPredicting = false;
           train();
 
-        case 7:
+        case 10:
         case "end":
           return _context.stop();
       }
@@ -51141,8 +51153,13 @@ _regenerator.default.mark(function _callee() {
   }, _callee, this);
 })));
 document.getElementById('predict').addEventListener('click', function () {
+  if (controllerDataset.xs == null) {
+    alert('请先设定键位');
+    return; // throw new Error('Add some examples before training!');
+  }
+
   ui.startPacman();
-  isPredicting = true;
+  window.isPredicting = true;
   predict();
 });
 
